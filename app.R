@@ -8,26 +8,29 @@
 #
 
 library(shiny)
+library(DAAG)
+
+data(biomass)
+
+biomass[is.na(biomass)] <- 0
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Biomass Data Univariate statiscial analysis"),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            selectInput("select", label = h3("Select feature"), 
+                        choices = cbind(names(biomass)), 
+                        selected = 1)
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+            tableOutput("statsTableOut")
         )
     )
 )
@@ -35,14 +38,19 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
+    tableStats <- reactive({
+        if (!is.numeric(biomass[, input$select])) return(NULL)
+        
+        names.tmp <- c('Max', 'Min', 'Moyenne')
+        summary.tmp <- c(max(biomass[, input$select]), min(biomass[, input$select]), mean(biomass[, input$select]))
+        summary.tmp <- cbind.data.frame(names.tmp, summary.tmp)
+        
+        colnames(summary.tmp) <- c('Statistique', 'Valeur')
+        
+        summary.tmp
+    });
+    
+    output$statsTableOut <- renderTable({ tableStats() })
 }
 
 # Run the application 
