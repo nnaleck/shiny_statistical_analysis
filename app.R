@@ -14,7 +14,7 @@ data(biomass)
 
 biomass[is.na(biomass)] <- 0
 
-# Define UI for application that draws a histogram
+# User Interface
 ui <- fluidPage(
     
     # Application title
@@ -48,7 +48,8 @@ ui <- fluidPage(
                              column(6, 
                                     # Zone d'affichage d'un summary
                                     plotOutput(outputId = "boxplot"))
-                         ))
+                         )),
+                tabPanel("dataset info", includeMarkdown('dataset.Rmd'))
                          
             )
         )
@@ -56,9 +57,9 @@ ui <- fluidPage(
     
 )
 
-# Define server logic required to draw a histogram
+# Serveur
 server <- function(input, output) {
-    # Colonnes du tableau statistique[qualitative]
+    # Tableau statistique[qualitative]
     tabStatsQual <- reactive({
         # Calculer les effectifs et les effectifs cumules
         table.tmp <- as.data.frame(table(biomass[, input$select]))
@@ -73,7 +74,8 @@ server <- function(input, output) {
         # Renvoyer le tableau statistique
         table.tmp
     })
-    # Colonnes du tableau statistique[quantitative]
+    
+    # Tableau statistique [quantitative]
     tabStatsQuant <- reactive({
         names.tmp <- c('Max', 'Min', 'Moyenne')
         summary.tmp <- c(max(biomass[, input$select]), min(biomass[, input$select]), mean(biomass[, input$select]))
@@ -83,13 +85,15 @@ server <- function(input, output) {
         
         summary.tmp
     });
+    
     output$statsTableOut <- renderTable({ 
-        if (is.numeric(biomass[, input$select])){
+        if (is.numeric(biomass[, input$select]))
+        {
             tabStatsQuant()
-        }else{
+        } else {
             tabStatsQual() 
         }
-        })
+    })
     
     # Histogramme des effectifs
     output$effectifsHist <- renderPlot({
@@ -110,39 +114,35 @@ server <- function(input, output) {
     
     # Boxplot
     output$boxplot <- renderPlot({
-        if (is.numeric(biomass[, input$select])){
-            boxplot(biomass[, input$select], main=paste("Boxplot de", input$select, sep=" "))
-        }else{
-            return(NULL)
-        }
+        if(! is.numeric(biomass[, input$select])) return(NULL)
+        
+        boxplot(biomass[, input$select], main=paste("Boxplot de", input$select, sep=" "))
     })
     
     #Courbe cumulative
     output$effectifsCumCurve <- renderPlot({
-        if (is.numeric(biomass[, input$select])){
-            #Recuperation des donnees a partir de l'histogramme
-            tmp.hist <- hist( biomass[, input$select], plot = FALSE,
-                            right = FALSE)
-        
-            plot(x = tmp.hist$breaks[-1], y = cumsum(tmp.hist$counts),
-                xlab = input$select,
-                ylab = "Effectifs cumules",
-                main = paste("Courbe cumulative de ", input$select, sep=""),
-                type = "o", col = "blue", lwd = 2)
-        }else{
-            return(NULL)
-        }
-        
+        if(! is.numeric(biomass[, input$select])) return(NULL)
+     
+        #Recuperation des donnees a partir de l'histogramme
+        tmp.hist <- hist( biomass[, input$select], plot = FALSE,
+                        right = FALSE)
+    
+        plot(x = tmp.hist$breaks[-1], y = cumsum(tmp.hist$counts),
+            xlab = input$select,
+            ylab = "Effectifs cumules",
+            main = paste("Courbe cumulative de ", input$select, sep=""),
+            type = "o", col = "blue", lwd = 2)
     })
     
     #Histogramme(frequencies)
     output$frequenceHist <- renderPlot({
-        if (is.numeric(biomass[, input$select])){
+        if (is.numeric(biomass[, input$select]))
+        {
              hist( biomass[, input$select], freq = FALSE,
                 main = paste("Histogramme de ", input$select, sep=""), col = "green",
                 xlab = input$select, ylab = "Densite de frequences", 
                 right = FALSE,)
-        }else{
+        } else {
             # Calcul des effectifs
             effectifs <- table(biomass[, input$select])
             #Diagramme en secteur
@@ -150,9 +150,12 @@ server <- function(input, output) {
                 main =paste("diagramme en secteurs de ", input$select, sep=""))
         }
     })
+    
+    # Informations sur le dataset
+    output$datasetInfo <- renderPrint(help(biomass))
 }
 
-# Run the application 
+# Lancement de l'application 
 shinyApp(ui = ui, server = server)
 
 
