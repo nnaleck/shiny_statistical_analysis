@@ -1,28 +1,20 @@
 ---
-title: "dataset.md"
+title: "dataset"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+## Dataset Biomass
 
-## R Markdown
+Le dataframe biomass est un dataset décrivant certains éléments faisant partie de la biomasse. 
+C'est un dataframe contenant **135 observations** et **8 variables**. C'est donc une matrice 135x8.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Format du dataset
+Le dataset contient les colonnes suivantes :
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+- **dbh** : vecteur numérique représentant le diamètre à hauteur de poitrine, qui est une mesure standard du diamètre du tronc d'un arbre.
+- **wood** : vecteur numérique représentant le volume de bois.
+- **bark** : vecteur numérique représentant l'écorce d'un tronc d'arbre.
+- **fac26** : variable qualitative à 3 niveaux : z, 6 et 2.
+- **root** : vecteur numérique représentant la distribution des racines.
+- **branch** : vecteur numérique représentant la longeur des branches.
+- **species** : variable qualitative représentant les espèces du dataset: **Acacia mabellae, C. fraseri, Acmena smithii, B. myrtifolia**
