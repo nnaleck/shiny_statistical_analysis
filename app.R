@@ -12,20 +12,24 @@ library(DAAG)
 
 data(biomass)
 
-biomass[is.na(biomass)] <- 0
+for (j in 1:6){
+    biomass[, j][is.na(biomass[, j])] <- median(biomass[, j], na.rm=T)
+}
 
 # User Interface
 ui <- fluidPage(
     
     # Application title
     titlePanel("Biomass Data Univariate statiscial analysis"),
+    h4("Travail realisé par: Ilyes Kamel, Abdelkarim Azzaz et Achraf Louiza"),
     
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            selectInput("select", label = h3("Select feature"), 
+            selectInput("select", label = h3("Select feature"),
                         choices = names(biomass), 
-                        selected = 1)
+                        selected = 1),
+            tags$i("Toutes les variables sont quantitatives sauf 'species' et 'fac26' qui sont qualitatives")
         ),
         
         # Show a plot of the generated distribution
@@ -77,13 +81,13 @@ server <- function(input, output) {
     
     # Tableau statistique [quantitative]
     tabStatsQuant <- reactive({
-        names.tmp <- c('Max', 'Min', 'Moyenne')
-        summary.tmp <- c(max(biomass[, input$select]), min(biomass[, input$select]), mean(biomass[, input$select]))
-        summary.tmp <- cbind.data.frame(names.tmp, summary.tmp)
+        q = data.frame(statistiques = c('min', 'quantile 25%', 'median', 'quantile 75%',
+                                        'max', 'moyenne', 'ecart type'),
+                       values = c(quantile(biomass[, input$select]), 
+                                  mean(biomass[, input$select]),
+                                  sd(biomass[, input$select]))
+                       )
         
-        colnames(summary.tmp) <- c('Statistique', 'Valeur')
-        
-        summary.tmp
     });
     
     output$statsTableOut <- renderTable({ 
@@ -101,7 +105,7 @@ server <- function(input, output) {
             hist( biomass[, input$select], freq = TRUE, col = "blue",
                   main = paste("Histogramme de", input$select, sep=" "),
                   xlab = paste("Indice de", input$select, sep=" "), ylab = "Effectifs")
-        }else{
+        } else {
             # Calcul des effectifs
             effectifs <- table(biomass[, input$select])
             # Diagramme en colonnes
@@ -115,14 +119,13 @@ server <- function(input, output) {
     # Boxplot
     output$boxplot <- renderPlot({
         if(! is.numeric(biomass[, input$select])) return(NULL)
-        
         boxplot(biomass[, input$select], main=paste("Boxplot de", input$select, sep=" "))
     })
     
     #Courbe cumulative
     output$effectifsCumCurve <- renderPlot({
         if(! is.numeric(biomass[, input$select])) return(NULL)
-     
+            
         #Recuperation des donnees a partir de l'histogramme
         tmp.hist <- hist( biomass[, input$select], plot = FALSE,
                         right = FALSE)
@@ -151,8 +154,6 @@ server <- function(input, output) {
         }
     })
     
-    # Informations sur le dataset
-    output$datasetInfo <- renderPrint(help(biomass))
 }
 
 # Lancement de l'application 
