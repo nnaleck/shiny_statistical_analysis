@@ -41,13 +41,13 @@ ui <- fluidPage(
             tabsetPanel(
                 tabPanel("summary", 
                          fluidRow(
-                            column(6, align="center",
-                            # Zone d'affichage d'un résumé statistique.
-                            tableOutput("statsTableOut")),
-                    column(6, 
-                           # Zone d'affichage d'un heatmap correlation
-                           plotOutput(outputId = "heatmapCorrelation"))
-                )),
+                            column(7, align="center",
+                                   # Zone d'affichage d'un résumé statistique
+                                   tableOutput("statsTableOut")),
+                            column(5,
+                                   # Zone d'affichage d'un heatmap correlation
+                                   plotOutput(outputId = "heatmapCorrelation"))
+                        )),
                 tabPanel("plots (univariate)",
                          fluidRow(
                              column(6, 
