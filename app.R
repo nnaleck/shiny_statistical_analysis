@@ -237,10 +237,24 @@ server <- function(input, output) {
         # Reshape data()
         data.stack <- melt(biomass[, columns], measure.vars = columns)
         # Boxplot élaborée
-        qplot(x = data.stack[,1], y = data.stack[,2], 
+        return(qplot(x = data.stack[,1], y = data.stack[,2], 
               xlab = "Modalités", ylab = "Mesures",
               geom=c("boxplot", "jitter"), fill=data.stack[,1]) +
-            theme(legend.title=element_blank())
+            theme(legend.title=element_blank()))
+        }
+        if ( is.numeric(biomass[, input$select]) & !is.numeric(biomass[, input$selectB])){
+              
+            return(qplot(x = biomass[, input$selectB], y = biomass[, input$select],
+                  xlab = "Modalités", ylab = "Mesures",
+                  geom=c("boxplot", "jitter"), fill=biomass[, input$selectB]) +
+                theme(legend.title=element_blank()))
+        }
+        if ( !is.numeric(biomass[, input$select]) & is.numeric(biomass[, input$selectB])){
+            
+            qplot(x = biomass[, input$select], y = biomass[, input$selectB],
+                  xlab = "Modalités", ylab = "Mesures",
+                  geom=c("boxplot", "jitter"), fill=biomass[, input$select]) +
+                theme(legend.title=element_blank())
         }
     })
 
