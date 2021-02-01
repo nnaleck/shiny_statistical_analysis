@@ -20,14 +20,14 @@ for (j in 1:6){
 ui <- fluidPage(
     
     # Application title
-    titlePanel("Biomass Data Univariate statiscial analysis"),
+    titlePanel("Biomass Data Univariate/Bivariate statiscial analysis"),
     h4("Travail realisé par: Ilyes Kamel, Abdelkarim Azzaz et Achraf Louiza"),
     
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
             tags$i("Toutes les variables sont quantitatives sauf 'species' et 'fac26' qui sont qualitatives"),
-            selectInput("select", label = h3("Select a feature"),
+            selectInput("select", label = h4("Select a feature for univariate analysis"),
                         choices = names(biomass), 
                         selected = 1),
             selectInput("selectB", label = h4("Select another feature for bivariate analysis"),
@@ -59,9 +59,10 @@ ui <- fluidPage(
                 tabPanel("summaryB", tableOutput("statsTableOutB")),
                 tabPanel("plotsB",
                          fluidRow(
-                             column(6, 
-                                    # Zone d'affichage de l'histogramme
-                                    plotOutput(outputId = "effectifsHistB")),
+                             column(6, fluidRow(
+                                 column(12, plotOutput(outputId = "nuagePointsBiv")),
+                                 column(4, offset = 3, textOutput("correlation"))
+                             )),
                              column(6, 
                                     # Zone d'affichage d'un summary
                                     plotOutput(outputId = "frequenceHistB"))
@@ -176,7 +177,25 @@ server <- function(input, output) {
     })
 
     ##Analyse bivariée: 
+    output$nuagePointsBiv <- renderPlot({
+        if(! is.numeric(biomass[, input$select]) || ! is.numeric(biomass[, input$selectB])) return(NULL) 
+        
+        plot(
+            x = biomass[, input$select], y = biomass[, input$selectB],
+            col = "red",
+            main=paste(input$selectB, 'en fonction de ', input$select),
+            xlab = input$select, ylab=input$selectB
+        );
+        
+        abline(lm(biomass[, input$selectB]~biomass[, input$select]), col="blue", lwd = 2)
+    })
     
+    output$correlation <- renderText({
+        if(! is.numeric(biomass[, input$select]) || ! is.numeric(biomass[, input$selectB])) return(NULL) 
+        
+        coeff_correlation.tmp <- cov(biomass[, input$select], biomass[, input$selectB])/(sqrt(var(biomass[, input$select])*var(biomass[, input$selectB])))
+        paste('Coeff de corrélation linéaire = ', round(coeff_correlation.tmp, digits=2))
+    })
     
 }
 
