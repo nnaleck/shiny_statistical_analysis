@@ -231,7 +231,18 @@ server <- function(input, output) {
         
         heatmap(corrMatrix.tmp)
     })
-    
+    output$histogrammeMod = renderPlot({
+        if( is.numeric(biomass[, input$select]) & is.numeric(biomass[, input$selectB])){  
+        columns = c(input$select, input$selectB)
+        # Reshape data()
+        data.stack <- melt(biomass[, columns], measure.vars = columns)
+        # Boxplot élaborée
+        qplot(x = data.stack[,1], y = data.stack[,2], 
+              xlab = "Modalités", ylab = "Mesures",
+              geom=c("boxplot", "jitter"), fill=data.stack[,1]) +
+            theme(legend.title=element_blank())
+        }
+    })
 
 }
 
