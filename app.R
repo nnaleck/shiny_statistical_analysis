@@ -39,8 +39,16 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         mainPanel(
             tabsetPanel(
-                tabPanel("summary", tableOutput("statsTableOut")),
-                tabPanel("plots",
+                tabPanel("summary", 
+                         fluidRow(
+                            column(6, align="center",
+                            # Zone d'affichage d'un résumé statistique.
+                            tableOutput("statsTableOut")),
+                    column(6, 
+                           # Zone d'affichage d'un heatmap correlation
+                           plotOutput(outputId = "heatmapCorrelation"))
+                )),
+                tabPanel("plots (univariate)",
                          fluidRow(
                              column(6, 
                                     # Zone d'affichage de l'histogramme
@@ -57,8 +65,7 @@ ui <- fluidPage(
                                     # Zone d'affichage d'un summary
                                     plotOutput(outputId = "boxplot"))
                          )),
-                tabPanel("summaryB", plotOutput(outputId = "heatmapCorrelation")),
-                tabPanel("plotsB",
+                tabPanel("plots (bivariate)",
                          fluidRow(
                              column(6, fluidRow(
                                  column(12, plotOutput(outputId = "nuagePointsBiv")),
@@ -75,6 +82,7 @@ ui <- fluidPage(
                                     # Zone d'affichage d'un summary
                                     plotOutput(outputId = "boxplotB"))
                          )),
+                tabPanel("Table", dataTableOutput("table"), style = "font-size: 85%"),
                 tabPanel("dataset info", includeMarkdown('dataset.Rmd'))
                          
             )
@@ -85,6 +93,9 @@ ui <- fluidPage(
 
 # Serveur
 server <- function(input, output) {
+    
+    output$table <- renderDataTable({biomass})
+    
     # Tableau statistique[qualitative]
     tabStatsQual <- reactive({
         # Calculer les effectifs et les effectifs cumules
