@@ -57,7 +57,7 @@ ui <- fluidPage(
                                     # Zone d'affichage d'un summary
                                     plotOutput(outputId = "boxplot"))
                          )),
-                tabPanel("summaryB", tableOutput("statsTableOutB")),
+                tabPanel("summaryB", plotOutput(outputId = "heatmapCorrelation")),
                 tabPanel("plotsB",
                          fluidRow(
                              column(6, fluidRow(
@@ -65,7 +65,7 @@ ui <- fluidPage(
                                  column(4, offset = 3, textOutput("correlation"))
                              )),
                              column(6, 
-                                    plotOutput(outputId = "heatmapCorrelation"))
+                                    plotOutput(outputId = "anotherThingGoingHere"))
                          ),
                          fluidRow(
                              column(6, 
