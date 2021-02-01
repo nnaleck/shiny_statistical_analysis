@@ -178,16 +178,22 @@ server <- function(input, output) {
 
     ##Analyse bivariée: 
     output$nuagePointsBiv <- renderPlot({
-        if(! is.numeric(biomass[, input$select]) || ! is.numeric(biomass[, input$selectB])) return(NULL) 
-        
-        plot(
-            x = biomass[, input$select], y = biomass[, input$selectB],
-            col = "red",
-            main=paste(input$selectB, 'en fonction de ', input$select),
-            xlab = input$select, ylab=input$selectB
-        );
-        
-        abline(lm(biomass[, input$selectB]~biomass[, input$select]), col="blue", lwd = 2)
+        if (!is.numeric(biomass[, input$select]) & !is.numeric(biomass[, input$selectB])){
+            return(ggplot(biomass, aes_string(x = input$select , fill=input$selectB)) + 
+                       geom_bar() +
+                       theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)))
+        }
+        if( is.numeric(biomass[, input$select]) &  is.numeric(biomass[, input$selectB])){
+            plot(
+                x = biomass[, input$select], y = biomass[, input$selectB],
+                col = "red",
+                main=paste(input$selectB, 'en fonction de ', input$select),
+                xlab = input$select, ylab=input$selectB
+            )
+            
+            abline(lm(biomass[, input$selectB]~biomass[, input$select]), col="blue", lwd = 2)
+        }
+        if(is.numeric(biomass[, input$select]) &  !is.numeric(biomass[, input$selectB])) return(NULL)
     })
     
     output$correlation <- renderText({
