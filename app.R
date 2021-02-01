@@ -26,10 +26,13 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            selectInput("select", label = h3("Select feature"),
+            tags$i("Toutes les variables sont quantitatives sauf 'species' et 'fac26' qui sont qualitatives"),
+            selectInput("select", label = h3("Select a feature"),
                         choices = names(biomass), 
                         selected = 1),
-            tags$i("Toutes les variables sont quantitatives sauf 'species' et 'fac26' qui sont qualitatives")
+            selectInput("selectB", label = h4("Select another feature for bivariate analysis"),
+                        choices = sort(names(biomass)), 
+                        selected = 1)
         ),
         
         # Show a plot of the generated distribution
@@ -52,6 +55,24 @@ ui <- fluidPage(
                              column(6, 
                                     # Zone d'affichage d'un summary
                                     plotOutput(outputId = "boxplot"))
+                         )),
+                tabPanel("summaryB", tableOutput("statsTableOutB")),
+                tabPanel("plotsB",
+                         fluidRow(
+                             column(6, 
+                                    # Zone d'affichage de l'histogramme
+                                    plotOutput(outputId = "effectifsHistB")),
+                             column(6, 
+                                    # Zone d'affichage d'un summary
+                                    plotOutput(outputId = "frequenceHistB"))
+                         ),
+                         fluidRow(
+                             column(6, 
+                                    # Zone d'affichage de l'histogramme
+                                    plotOutput(outputId = "effectifsCumCurveB")),
+                             column(6, 
+                                    # Zone d'affichage d'un summary
+                                    plotOutput(outputId = "boxplotB"))
                          )),
                 tabPanel("dataset info", includeMarkdown('dataset.Rmd'))
                          
@@ -153,6 +174,9 @@ server <- function(input, output) {
                 main =paste("diagramme en secteurs de ", input$select, sep=""))
         }
     })
+
+    ##Analyse bivariée: 
+    
     
 }
 
