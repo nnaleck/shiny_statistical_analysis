@@ -65,7 +65,7 @@ ui <- fluidPage(
                                  column(4, offset = 3, textOutput("correlation"))
                              )),
                              column(6, 
-                                    plotOutput(outputId = "anotherThingGoingHere"))
+                                    plotOutput(outputId = "histogrammeMod"))
                          ),
                          fluidRow(
                              column(6, 
@@ -193,7 +193,18 @@ server <- function(input, output) {
             
             abline(lm(biomass[, input$selectB]~biomass[, input$select]), col="blue", lwd = 2)
         }
-        if(is.numeric(biomass[, input$select]) &  !is.numeric(biomass[, input$selectB])) return(NULL)
+        if(is.numeric(biomass[, input$select]) &  !is.numeric(biomass[, input$selectB])){
+            return(ggplot(data=biomass)+
+            geom_histogram(mapping = aes_string(input$select, fill=input$selectB), bins = 10)+
+            xlab(label = input$select)+
+            ylab(label="Frequency"))
+        }
+        if(!is.numeric(biomass[, input$select]) &  is.numeric(biomass[, input$selectB])){ 
+            ggplot(data=biomass)+
+                geom_histogram(mapping = aes_string(input$selectB, fill=input$select), bins = 10)+
+                xlab(label = input$selectB)+
+                ylab(label="Frequency")
+        }
     })
     
     output$correlation <- renderText({
@@ -209,6 +220,8 @@ server <- function(input, output) {
         
         heatmap(corrMatrix.tmp)
     })
+    
+
 }
 
 # Lancement de l'application 
