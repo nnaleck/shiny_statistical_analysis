@@ -9,6 +9,7 @@
 
 library(shiny)
 library(DAAG)
+library(ggplot2)
 
 data(biomass)
 
@@ -64,8 +65,7 @@ ui <- fluidPage(
                                  column(4, offset = 3, textOutput("correlation"))
                              )),
                              column(6, 
-                                    # Zone d'affichage d'un summary
-                                    plotOutput(outputId = "frequenceHistB"))
+                                    plotOutput(outputId = "heatmapCorrelation"))
                          ),
                          fluidRow(
                              column(6, 
@@ -197,6 +197,12 @@ server <- function(input, output) {
         paste('Coeff de corrélation linéaire = ', round(coeff_correlation.tmp, digits=2))
     })
     
+    output$heatmapCorrelation <- renderPlot({
+        nums.tmp <- unlist(lapply(biomass, is.numeric))
+        corrMatrix.tmp = round(cor(biomass[, nums.tmp]), 2)
+        
+        heatmap(corrMatrix.tmp)
+    })
 }
 
 # Lancement de l'application 
