@@ -1,0 +1,12 @@
+name: biomass
+title: biomass
+username:
+account: achraf-louiza
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3526896
+bundleId: 4171088
+url: https://achraf-louiza.shinyapps.io/biomass/
+when: 1612271359.10383
+asMultiple: FALSE
+asStatic: FALSE

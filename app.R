@@ -10,7 +10,7 @@
 library(shiny)
 library(DAAG)
 library(ggplot2)
-
+library(reshape2)
 data(biomass)
 
 for (j in 1:6){
@@ -208,13 +208,15 @@ server <- function(input, output) {
             return(ggplot(data=biomass)+
             geom_histogram(mapping = aes_string(input$select, fill=input$selectB), bins = 10)+
             xlab(label = input$select)+
-            ylab(label="Frequency"))
+            ylab(label="Frequency")+
+            theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)))
         }
         if(!is.numeric(biomass[, input$select]) &  is.numeric(biomass[, input$selectB])){ 
             ggplot(data=biomass)+
                 geom_histogram(mapping = aes_string(input$selectB, fill=input$select), bins = 10)+
                 xlab(label = input$selectB)+
-                ylab(label="Frequency")
+                ylab(label="Frequency")+
+                theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
         }
     })
     
@@ -247,14 +249,14 @@ server <- function(input, output) {
             return(qplot(x = biomass[, input$selectB], y = biomass[, input$select],
                   xlab = "Modalités", ylab = "Mesures",
                   geom=c("boxplot", "jitter"), fill=biomass[, input$selectB]) +
-                theme(legend.title=element_blank()))
+                theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)))
         }
         if ( !is.numeric(biomass[, input$select]) & is.numeric(biomass[, input$selectB])){
             
             qplot(x = biomass[, input$select], y = biomass[, input$selectB],
                   xlab = "Modalités", ylab = "Mesures",
                   geom=c("boxplot", "jitter"), fill=biomass[, input$select]) +
-                theme(legend.title=element_blank())
+                theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5))
         }
     })
 
